@@ -3,10 +3,40 @@
     import { page } from '$app/stores';
     import '../app.css';
 
-    function handleLoad() {
-        alert('Load File!');
-    }
+    import yaml from 'js-yaml';
 
+	let fileInput;
+
+	function handleLoad() {
+		fileInput.click();
+	}
+
+	async function handleFileChange(event) {
+		const file = event.target.files[0];
+		if (!file) return;
+
+		const reader = new FileReader();
+
+		reader.onload = (e) => {
+			try {
+				const contents = e.target.result;
+				const data = yaml.load(contents);
+				console.log('Parsed YAML:', data);
+			} catch (error) {
+				console.error('Error parsing YAML:', error);
+			}
+		};
+
+		reader.readAsText(file);
+	}
+
+/*
+    function handleLoad() {
+        //alert('Load File!');
+        const parsedData = yaml.load(rawData);
+        console.log(parsedData);
+    }
+*/
     function handleSave() {
         alert('Save File!');
     }
@@ -41,6 +71,14 @@
       <button class="btn btn-light" on:click={handleLoad}>
         Load File
        </button>
+       <input
+           type="file"
+           bind:this={fileInput}
+           on:change={handleFileChange}
+           style="display: none"
+       />
+
+
        <button class="btn btn-light" on:click={handleSave}>
         Save File
        </button>
